@@ -4,17 +4,16 @@ The agent names and you approve. These notebooks write the silver table, the app
 
 ## Files
 
-Keep this layout in the Databricks Git folder. Both notebooks `%run "./utils/..."`.
+This repo root is the Databricks Git folder. Both notebooks `%run "./utils/..."`.
 
 ```text
-Jobs/
-  config_loader.py          task 1, serverless
-  layer1_etl_job.py         task 2, classic cluster
-  utils/
-    lakebase_config.py
-    etl_config_bootstrap.py
-    transformation_functions.py
-  04_sections/              setup notes
+config_loader.py          task 1, serverless
+layer1_etl_job.py         task 2, classic cluster
+utils/
+  lakebase_config.py
+  etl_config_bootstrap.py
+  transformation_functions.py
+04_sections/              setup notes
 ```
 
 ## How a load works
