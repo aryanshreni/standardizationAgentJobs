@@ -18,7 +18,7 @@ Each load job has two tasks:
 Task 1: load_config   (Serverless)        reads the approved mapping from Lakebase
           │
           ▼
-Task 2: layer1_etl    (Classic cluster)   writes thoughtfocus_nsk.standardized
+Task 2: layer1_etl    (Classic cluster)   writes thoughtfocus_nsk.silver_standardized
 ```
 
 Task 1 must be named exactly `load_config`. Task 2 must depend on it.
@@ -46,8 +46,8 @@ config_schema       <Lakebase schema with table_mappings and column_mappings>
 |---|---|
 | Catalog `thoughtfocus_nsk` | USE CATALOG |
 | Schema `thoughtfocus_nsk.keka_ns_csv` | USE SCHEMA, SELECT |
-| Schema `thoughtfocus_nsk.standardized` | USE SCHEMA, SELECT, MODIFY, CREATE TABLE, APPLY TAG (create the schema first if needed) |
-| Table `thoughtfocus_nsk.standardized.dbx_notebook_audit` | SELECT, MODIFY (the first run can create it) |
+| Schema `thoughtfocus_nsk.silver_standardized` | USE SCHEMA, SELECT, MODIFY, CREATE TABLE, APPLY TAG (create the schema first if needed) |
+| Table `thoughtfocus_nsk.silver_standardized.dbx_notebook_audit` | SELECT, MODIFY (the first run can create it) |
 
 Lakebase, in the Lakebase SQL editor:
 
@@ -63,7 +63,7 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA <lakebase-schema> GRANT SELECT ON TABLES TO "
 
 1. Confirm Lakebase has an active mapping for `keka_group_types_inc_std`.
 2. Run the job once in Databricks.
-3. Confirm `thoughtfocus_nsk.standardized.hr_group_types` exists and has rows.
+3. Confirm `thoughtfocus_nsk.silver_standardized.hr_group_types` exists and has rows.
 4. Copy the Job ID into the agent as `KEKA_GROUP_TYPES_INC_STD_LOAD_JOB_ID`.
 
 ## 5. Clone the other 18 jobs

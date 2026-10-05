@@ -71,8 +71,8 @@ _SQL_WORDS = (
 )
 _KEY_TOKENS = ("nbr", "id", "key", "num", "no")
 _DEFAULT_CATALOG = "thoughtfocus_nsk"
-_DEFAULT_SCHEMA = "standardized"
-_DEFAULT_AUDIT = "thoughtfocus_nsk.standardized.dbx_notebook_audit"
+_DEFAULT_SCHEMA = "silver_standardized"
+_DEFAULT_AUDIT = "thoughtfocus_nsk.silver_standardized.dbx_notebook_audit"
 
 
 class LakebaseConfigError(RuntimeError):

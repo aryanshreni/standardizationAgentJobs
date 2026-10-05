@@ -1,6 +1,6 @@
 # Standardization Agent: Layer 1 (silver) jobs
 
-The agent names and you approve. These notebooks write the silver table, the approved columns, and the source rows into `thoughtfocus_nsk.standardized`.
+The agent names and you approve. These notebooks write the silver table, the approved columns, and the source rows into `thoughtfocus_nsk.silver_standardized`.
 
 ## Files
 
@@ -46,7 +46,7 @@ config_schema       <Lakebase schema that holds table_mappings and column_mappin
 
 ## Silver table
 
-- Catalog / schema: `thoughtfocus_nsk.standardized`
+- Catalog / schema: `thoughtfocus_nsk.silver_standardized`
 - Extra identity column: `silver_key` (not a source column)
 - `source_system`: `keka` or `netsuite`, from the source table name
 - Load: the current source table. `FileDate` / `ETLDate` are not required

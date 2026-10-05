@@ -2,7 +2,7 @@
 # MAGIC %md
 # MAGIC ## Layer 1 silver load — task 2
 # MAGIC
-# MAGIC Writes the approved Keka / NetSuite table into `thoughtfocus_nsk.standardized`.
+# MAGIC Writes the approved Keka / NetSuite table into `thoughtfocus_nsk.silver_standardized`.
 # MAGIC Adds `silver_key`. Loads the current source table. Run on a **classic cluster**.
 
 # COMMAND ----------

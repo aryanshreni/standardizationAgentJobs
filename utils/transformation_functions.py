@@ -371,7 +371,7 @@ def build_etl_metadata_columns(link_key_name, link_key_columns, target_table, cy
          "description": "Source system for this row: keka or netsuite.",
          "tags": ["lineage"]},
         {"target_col": "TargetETLDate",
-         "description": "Timestamp this row was written into thoughtfocus_nsk.standardized.",
+         "description": "Timestamp this row was written into thoughtfocus_nsk.silver_standardized.",
          "tags": ["technical_metadata", "audit"]},
         {"target_col": "JobRun_ID",
          "description": "Identifier of the Databricks job run that wrote this row.",
