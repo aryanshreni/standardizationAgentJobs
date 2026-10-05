@@ -34,7 +34,7 @@ job_run_id          {{job.run_id}}
 sourceTableName     keka_group_types_inc_std
 sourceCatalogName   thoughtfocus_nsk
 sourceSchemaName    keka_ns_csv
-config_schema       <Lakebase schema with table_mappings and column_mappings>
+config_schema       public
 ```
 
 6. **Run as** the Job SP.

@@ -261,7 +261,19 @@ def _table(schema, name):
     return f'"{schema}".{name}' if schema else name
 
 
-def fetch_configs(conn, schema="app"):
+_DEFAULT_CONFIG_SCHEMA = "public"
+_TABLE_MAPPING_COLUMNS = (
+    "id, source_table_name, target_table_name, "
+    "table_description, tags, source, created_at"
+)
+_COLUMN_MAPPING_COLUMNS = (
+    "id, source_column_name, target_column_name, source, "
+    "target_data_type, length, precision, scale, column_desc, "
+    "transformations, pii, tags, created_at"
+)
+
+
+def fetch_configs(conn, schema=_DEFAULT_CONFIG_SCHEMA):
     try:
         rows = conn.execute(text(f"SELECT name, value FROM {_table(schema, 'configs')}"))
     except Exception:
@@ -269,11 +281,10 @@ def fetch_configs(conn, schema="app"):
     return {_s(r[0]): "" if r[1] is None else str(r[1]) for r in rows}
 
 
-def fetch_active_table_mapping(conn, source_table, schema="app"):
+def fetch_active_table_mapping(conn, source_table, schema=_DEFAULT_CONFIG_SCHEMA):
     row = conn.execute(
         text(
-            f"SELECT id, source_table_name, target_table_name, "
-            f"       table_description, tags, approved_at, version "
+            f"SELECT {_TABLE_MAPPING_COLUMNS} "
             f"FROM {_table(schema, 'table_mappings')} "
             f"WHERE lower(source_table_name) = lower(:t) AND is_active"
         ),
@@ -282,12 +293,10 @@ def fetch_active_table_mapping(conn, source_table, schema="app"):
     return dict(row) if row else None
 
 
-def fetch_active_column_mappings(conn, source_table, schema="app"):
+def fetch_active_column_mappings(conn, source_table, schema=_DEFAULT_CONFIG_SCHEMA):
     rows = conn.execute(
         text(
-            f"SELECT id, source_column_name, target_column_name, "
-            f"       source_data_type, target_data_type, transformations, pii, "
-            f"       column_desc, tags, divisor, version "
+            f"SELECT {_COLUMN_MAPPING_COLUMNS} "
             f"FROM {_table(schema, 'column_mappings')} "
             f"WHERE lower(source_table_name) = lower(:t) AND is_active "
             f"ORDER BY target_column_name, source_column_name"
@@ -349,15 +358,11 @@ def resolve_column_mapping(column_rows, *, link_key_name, surrogate_key_column, 
         candidates.setdefault(target_col.lower(), []).append(row)
 
     def _rank(row):
-        try:
-            version = int(row.get("version") or 0)
-        except (TypeError, ValueError):
-            version = 0
-        return (-version, _s(row.get("source_column_name")).lower())
+        return (_s(row.get("created_at")), _s(row.get("source_column_name")).lower())
 
     column_mapping = []
     for target_key in sorted(candidates):
-        ranked = sorted(candidates[target_key], key=_rank)
+        ranked = sorted(candidates[target_key], key=_rank, reverse=True)
         winner = ranked[0]
         if len(ranked) > 1:
             reports["duplicate_targets"][_s(winner.get("target_column_name"))] = {
@@ -501,8 +506,8 @@ def resolve_etl_config(source_table, table_mapping, column_rows, configs,
         "auditTableName": audit_table,
         "provenance": {
             "table_mapping_id": _s((table_mapping or {}).get("id")),
-            "table_mapping_version": (table_mapping or {}).get("version"),
-            "approved_at": _s((table_mapping or {}).get("approved_at")),
+            "table_mapping_source": _s((table_mapping or {}).get("source")),
+            "created_at": _s((table_mapping or {}).get("created_at")),
             "active_column_rows": len(column_rows or []),
             "columns_resolved": len(column_mapping),
             "surrogate_key_column": surrogate_key_column,
@@ -546,7 +551,7 @@ def lakebase_engine(project=None, branch=None, endpoint=None, database=None):
     )
 
 
-def load_etl_config(source_table, schema="app", engine=None,
+def load_etl_config(source_table, schema=_DEFAULT_CONFIG_SCHEMA, engine=None,
                     source_catalog=None, source_schema=None):
     own_engine = engine is None
     engine = engine or lakebase_engine()
@@ -580,7 +585,8 @@ def describe_etl_config(config):
         f"  link key      : {config['linkKeyName']} from {config['linkKeyColumns']}",
         f"  silver key    : {config['surrogateKeyColumnName']}",
         f"  audit table   : {config['auditTableName']}",
-        f"  approved      : table_mapping version={provenance.get('table_mapping_version')}",
+        f"  saved         : source={provenance.get('table_mapping_source') or '(none)'} "
+        f"created_at={provenance.get('created_at') or '(none)'}",
         f"  columns       : {provenance.get('columns_resolved')} resolved from "
         f"{provenance.get('active_column_rows')} active row(s)",
     ]

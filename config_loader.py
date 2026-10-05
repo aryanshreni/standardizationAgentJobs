@@ -27,7 +27,7 @@ import json
 dbutils.widgets.text("sourceTableName", "")
 dbutils.widgets.text("sourceCatalogName", "thoughtfocus_nsk")
 dbutils.widgets.text("sourceSchemaName", "keka_ns_csv")
-dbutils.widgets.text("config_schema", "app")
+dbutils.widgets.text("config_schema", "public")
 
 sourceTableName = dbutils.widgets.get("sourceTableName").strip()
 sourceCatalogName = dbutils.widgets.get("sourceCatalogName").strip()

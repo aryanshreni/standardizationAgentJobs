@@ -41,7 +41,7 @@ Job defaults:
 ```text
 sourceCatalogName   thoughtfocus_nsk
 sourceSchemaName    keka_ns_csv
-config_schema       <Lakebase schema that holds table_mappings and column_mappings>
+config_schema       public
 ```
 
 ## Silver table
